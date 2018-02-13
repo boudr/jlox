@@ -1,5 +1,5 @@
 all:
-	javac Lox.java
+	javac ${PWD}/com/craftinginterpreters/lox/*.java
 
 clean:
-	rm -f *.class
+	rm -f ${PWD}/com/craftinginterpreters/lox/*.class

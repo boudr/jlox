@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Scanner;
 
 public class Lox{
 
@@ -37,7 +36,7 @@ public class Lox{
         BufferedReader reader = new BufferedReader(input);
 
         for(;;){
-            System.out.println("> ");
+            System.out.print("> ");
             run(reader.readLine());
             hadError = false;
         }
