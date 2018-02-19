@@ -1,0 +1,4 @@
+var name = "Hello!"
+
+/* This is a 
+Block/* comment!*/ print name

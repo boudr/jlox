@@ -13,6 +13,7 @@ class Scanner{
     private int start = 0;
     private int current = 0;
     private int line = 1;
+    private int commentNest = 0;
 
     private static final Map<String, TokenType> keywords;
 
@@ -62,7 +63,12 @@ class Scanner{
             case '-': addToken(MINUS); break;
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
-            case '*': addToken(STAR); break;
+            case '*':
+                 if(match('/')){
+                    commentNest--;
+                 }else{
+                    addToken(STAR); break;
+                 }
             case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
             case '=': addToken(match('=') ? EQUAL_EQUAL: EQUAL); break;
             case '>': addToken(match('=') ? GREATER_EQUAL : EQUAL); break;
@@ -70,8 +76,15 @@ class Scanner{
             case '/':
                  if (match('/')){
                     while (peek() != '\n' && !isAtEnd()) advance();
+                 }else if(match('*')){
+                    commentNest++;
                  }else{
                     addToken(SLASH);
+                    break;
+                 }
+
+                 if(commentNest > 0){
+                    multiComment();
                  }
                  break;
             case ' ':
@@ -135,6 +148,26 @@ class Scanner{
 
         String value = source.substring(start+1, current-1);
         addToken(STRING, value);
+    }
+
+    private void multiComment(){
+        char c = advance();
+
+        if(isAtEnd()){
+            Lox.error(line, "Unterminated comment!");
+            return;
+        }
+        while(commentNest > 0 && !isAtEnd()){
+            Lox.error(line, ""+c);
+            if(c == '*' && match('/')){
+                Lox.error(line, ""+commentNest);
+                commentNest--;
+            }
+            if(c == '\n'){
+                line++;
+            }
+            c = advance();
+        }
     }
 
     private boolean match(char c){
